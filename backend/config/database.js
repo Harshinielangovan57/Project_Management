@@ -74,7 +74,12 @@ const connectDatabase = async () => {
   }
 };
 
-module.exports = {
+const exported = {
   sequelize,
   connectDatabase
 };
+
+module.exports = exported;
+module.exports.default = exported;
+module.exports.sequelize = sequelize;
+module.exports.connectDatabase = connectDatabase;
