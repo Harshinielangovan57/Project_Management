@@ -81,8 +81,10 @@ const startServer = async () => {
 if (!process.env.VERCEL) {
   startServer();
 } else {
-  // Ensure DB connection on serverless startup
-  connectDatabase().catch((err) => console.error('[Database Error]', err));
+  // Ensure DB connection and sync tables on serverless startup
+  connectDatabase()
+    .then(() => sequelize.sync())
+    .catch((err) => console.error('[Database Error]', err));
 }
 
 module.exports = app;

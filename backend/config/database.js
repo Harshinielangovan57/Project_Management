@@ -17,12 +17,13 @@ if (dbDialect === 'sqlite') {
     logging: false
   });
 } else {
-  // PostgreSQL dialect
-  if (process.env.DATABASE_URL) {
-    sequelize = new Sequelize(process.env.DATABASE_URL, {
+  const dbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  if (dbUrl) {
+    const isLocalhost = dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1');
+    sequelize = new Sequelize(dbUrl, {
       dialect: 'postgres',
       logging: process.env.NODE_ENV === 'development' ? console.log : false,
-      dialectOptions: process.env.DB_SSL === 'true' ? {
+      dialectOptions: (process.env.DB_SSL === 'true' || !isLocalhost) ? {
         ssl: {
           require: true,
           rejectUnauthorized: false
