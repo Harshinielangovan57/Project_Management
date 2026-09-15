@@ -74,12 +74,9 @@ const connectDatabase = async () => {
   }
 };
 
-const exported = {
+// Export sequelize instance directly as module.exports.sequelize
+// so that models can safely do: const { sequelize } = require('../config/database')
+module.exports = {
   sequelize,
   connectDatabase
 };
-
-module.exports = exported;
-module.exports.default = exported;
-module.exports.sequelize = sequelize;
-module.exports.connectDatabase = connectDatabase;

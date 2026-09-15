@@ -4,8 +4,12 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 require('dotenv').config();
 
+// Load database config FIRST before any models
 const { sequelize, connectDatabase } = require('./config/database');
-require('./models'); // Load associations
+
+// Load model associations after sequelize is initialized
+require('./models');
+
 const errorHandler = require('./middleware/errorHandler');
 const { apiLimiter } = require('./middleware/rateLimiter');
 
@@ -63,7 +67,6 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDatabase();
-    // Synchronize models with database (creates tables if they don't exist)
     await sequelize.sync();
     console.log('[Database] Models synchronized successfully.');
 
@@ -77,7 +80,8 @@ const startServer = async () => {
   }
 };
 
-// Start server for local development or handle Vercel serverless
+// Vercel serverless: initialize DB connection once at module load time
+// app.listen() must NOT be called in serverless environments
 if (!process.env.VERCEL) {
   startServer();
 } else {
